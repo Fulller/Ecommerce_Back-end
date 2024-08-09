@@ -1,0 +1,11 @@
+node_modules
+.env
+*.env
+product.env
+.vscode
+dist
+dockerfile
+*.dockerignore
+doc
+src/logs
+src/test
