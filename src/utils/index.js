@@ -18,3 +18,4 @@ export {
 export { googleToLocal, githubToLocal } from "./convertProfile.util.js";
 export { default as clientAuthenURL } from "./clientAuthenURL.js";
 export { default as generateRandomPassword } from "./generateRandomPassword.js";
+export { default as transformRolesToGrants } from "./transformRolesToGrants.util.js";

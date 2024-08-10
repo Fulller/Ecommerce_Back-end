@@ -15,7 +15,7 @@ const InventoryRepo = {
       inven_location,
     });
   },
-  async resercationInventory({ productId, quantity, carId }) {
+  async resercationInventory({ productId, quantity, cartId }) {
     const query = {
       inven_productId: toObjectId(productId),
       inven_stock: { $gte: quantity },

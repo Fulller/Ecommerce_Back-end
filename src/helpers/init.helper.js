@@ -3,33 +3,28 @@ import APIKeyService from "../services/apikey.service.js";
 import UserService from "../services/user.service.js";
 import TemplateService from "../services/template.service.js";
 import {
-  ROLE_NAMES,
   PERMISSION,
   TEMPLATE_HTML_ID_1,
   TEMPLATE_HTML_ID_2,
   TEMPLATE_HTML_ID_3,
 } from "../configs/const.config.js";
+import { ROLE_SCHEMA_CONST } from "../configs/schema.const.config.js";
 import env from "../configs/env.config.js";
 import _ from "lodash";
 
 async function getRBACResourceId() {
   const resourceName = "rbac";
-  let rbacResource = await RBACService.findByName(resourceName);
-  if (rbacResource) {
-    return rbacResource._id;
-  }
-  rbacResource = await RBACService.newResource({
+  return await RBACService.findResourceId({
     src_name: resourceName,
     src_description: "RBAC resource",
     src_slug: resourceName,
   });
-  return rbacResource._id;
 }
 async function initRole() {
   const rbacResouceId = await getRBACResourceId();
   const roles = [
     {
-      rol_name: ROLE_NAMES.ADMIN,
+      rol_name: ROLE_SCHEMA_CONST.NAME.ADMIN,
       rol_slug: "r001",
       rol_description: "Admin app",
       rol_grants: [
@@ -58,17 +53,19 @@ async function initRole() {
           attribute: "*",
         },
       ],
+      rol_inherited: [ROLE_SCHEMA_CONST.NAME.SHOP],
     },
     {
-      rol_name: ROLE_NAMES.USER,
+      rol_name: ROLE_SCHEMA_CONST.NAME.SHOP,
       rol_slug: "r002",
-      rol_description: "User app",
+      rol_description: "Shop app",
       rol_grants: [],
+      rol_inherited: [ROLE_SCHEMA_CONST.NAME.USER],
     },
     {
-      rol_name: ROLE_NAMES.SHOP,
-      rol_slug: "r003",
-      rol_description: "Shop app",
+      rol_name: ROLE_SCHEMA_CONST.NAME.USER,
+      rol_slug: "r001",
+      rol_description: "User app",
       rol_grants: [],
     },
   ];

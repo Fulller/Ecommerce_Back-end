@@ -1,8 +1,7 @@
 import { Schema, SchemaTypes, model } from "mongoose";
-import { ORDER_STATUS } from "../configs/const.config.js";
 
-const DOCUMENT_NAME = "Order";
-const COLLECTION_NAME = "Orders";
+import { ORDER_SCHEMA_CONST } from "../configs/schema.const.config.js";
+const { DOCUMENT_NAME, COLLECTION_NAME, STATUS } = ORDER_SCHEMA_CONST;
 
 const orderSchema = new Schema(
   {
@@ -15,8 +14,8 @@ const orderSchema = new Schema(
     order_products: { type: SchemaTypes.Array, require: true },
     order_trackingNumer: {
       type: SchemaTypes.String,
-      enum: Object.values(ORDER_STATUS),
-      default: ORDER_STATUS.PENDING,
+      enum: Object.values(STATUS),
+      default: STATUS.PENDING,
     },
   },
   {

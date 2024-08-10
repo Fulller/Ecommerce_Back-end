@@ -1,35 +1,39 @@
 import { Schema, SchemaTypes, model } from "mongoose";
+import {
+  SHOP_SCHEMA_CONST,
+  USER_SCHEMA_CONST,
+} from "../configs/schema.const.config.js";
 
-const DOCUMENT_NAME = "Shop";
-const COLLECTION_NAME = "Shops";
+const { DOCUMENT_NAME, COLLECTION_NAME, STATUS } = SHOP_SCHEMA_CONST;
 
-const shopSchema = new Schema(
+const ShopSchema = new Schema(
   {
-    name: {
+    shop_name: {
       type: SchemaTypes.String,
       trim: true,
       maxLength: 150,
     },
-    email: {
+    shop_address: {
       type: SchemaTypes.String,
-      required: true,
       trim: true,
+      maxLength: 150,
     },
-    password: {
+    shop_status: {
       type: SchemaTypes.String,
-      required: true,
+      enum: Object.values(STATUS),
+      default: STATUS.INACTIVE,
     },
-    status: {
-      type: SchemaTypes.String,
-      enum: ["active", "inactive"],
-      default: "inactive",
-    },
-    verify: {
+    shop_verify: {
       type: SchemaTypes.Boolean,
       default: false,
     },
-    roles: { type: SchemaTypes.Array, default: [] },
+    shop_owner: {
+      type: Schema.ObjectId,
+      ref: USER_SCHEMA_CONST.DOCUMENT_NAME,
+      require: true,
+    },
   },
   { timestamps: true, collection: COLLECTION_NAME }
 );
-export default model(DOCUMENT_NAME, shopSchema);
+ShopSchema.index({ shop_owner: 1 });
+export default model(DOCUMENT_NAME, ShopSchema);

@@ -1,6 +1,6 @@
 import User from "../user.model.js";
 import RoleReposiroty from "./role.repo.js";
-import { ROLE_NAMES } from "../../configs/const.config.js";
+import { ROLE_SCHEMA_CONST } from "../../configs/schema.const.config.js";
 import { pickAccountData } from "../../utils/index.js";
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
@@ -18,7 +18,7 @@ const UserRepository = {
       throw createHttpError(400, `User with email ${email} has existed`);
     }
     const [usr_role, usr_password] = await Promise.all([
-      RoleReposiroty.findRoleIdByName(ROLE_NAMES.USER),
+      RoleReposiroty.findRoleIdByName(ROLE_SCHEMA_CONST.NAME.USER),
       bcrypt.hash(password, 10),
     ]);
     return await User.create({
@@ -34,7 +34,7 @@ const UserRepository = {
       return null;
     }
     const [usr_role, usr_password] = await Promise.all([
-      RoleReposiroty.findRoleIdByName(ROLE_NAMES.ADMIN),
+      RoleReposiroty.findRoleIdByName(ROLE_SCHEMA_CONST.NAME.ADMIN),
       bcrypt.hash(password, 10),
     ]);
     const newAdmin = await User.create({
@@ -55,7 +55,9 @@ const UserRepository = {
       usr_isFromSocial: true,
     });
     if (!user) {
-      const usr_role = await RoleReposiroty.findRoleIdByName(ROLE_NAMES.USER);
+      const usr_role = await RoleReposiroty.findRoleIdByName(
+        ROLE_SCHEMA_CONST.NAME.USER
+      );
       user = await User.create({ ...profile, usr_role });
     }
     return await UserRepository.userFormatForToken(user);
@@ -67,6 +69,7 @@ const UserRepository = {
     }
     user.usr_password = await bcrypt.hash(password, 10);
     await user.save();
+    return user;
   },
   async userFormatForToken(user) {
     return pickAccountData(
@@ -75,6 +78,17 @@ const UserRepository = {
         select: "_id rol_name",
       })
     );
+  },
+  async findById(userId) {
+    return User.findById(userId);
+  },
+  async isRole(userId, roleName) {
+    let user = await UserRepository.findById(userId);
+    if (!user) {
+      throw create(404, "isRole :: user not found ");
+    }
+    user = await user.populate("usr_role");
+    return user.usr_role.rol_name == roleName;
   },
 };
 export default UserRepository;

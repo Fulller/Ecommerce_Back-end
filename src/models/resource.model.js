@@ -1,16 +1,17 @@
 import { Schema, SchemaTypes, model } from "mongoose";
+import { RESOURCE_SCHEMA_CONST } from "../configs/schema.const.config.js";
 
-const DOCUMENT_NAME = "Resource";
-const COLLECTION_NAME = "Resources";
-
-const resourceSchema = new Schema(
+const { DOCUMENT_NAME, COLLECTION_NAME } = RESOURCE_SCHEMA_CONST;
+const ResourceSchema = new Schema(
   {
     src_name: {
       type: SchemaTypes.String,
+      unique: true,
       require: true,
     },
     src_slug: {
       type: SchemaTypes.String,
+      unique: true,
       require: true,
     },
     src_description: {
@@ -20,4 +21,4 @@ const resourceSchema = new Schema(
   },
   { timestamps: true, collection: COLLECTION_NAME }
 );
-export default model(DOCUMENT_NAME, resourceSchema);
+export default model(DOCUMENT_NAME, ResourceSchema);

@@ -4,13 +4,24 @@ import {
   toObjectId,
   convertToListGrant,
   removeNullUndefined,
+  transformRolesToGrants,
 } from "../utils/index.js";
 import createHttpError from "http-errors";
 import _ from "lodash";
 
 const RBACService = {
-  async findByName(src_name) {
-    return await Resource.findOne({ src_name });
+  async findResourceId(resourceData) {
+    const resource = await Resource.findOneAndUpdate(
+      { src_name: resourceData.src_name },
+      { $set: resourceData },
+      {
+        new: true,
+        runValidators: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      }
+    ).lean();
+    return resource._id;
   },
   async newRole({
     rol_name,
@@ -18,6 +29,7 @@ const RBACService = {
     rol_status,
     rol_description,
     rol_grants = [],
+    rol_inherited = [],
   }) {
     const role = await Role.findOne({ rol_name });
     if (role) {
@@ -29,6 +41,7 @@ const RBACService = {
       rol_status,
       rol_description,
       rol_grants,
+      rol_inherited,
     });
   },
   async newResource({ src_name, src_slug, src_description }) {
@@ -80,7 +93,7 @@ const RBACService = {
   },
   async listGrant() {
     const roles = await Role.find().populate("rol_grants.resource").lean();
-    return convertToListGrant(roles);
+    return transformRolesToGrants(roles);
   },
 };
 

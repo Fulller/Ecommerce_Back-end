@@ -1,7 +1,7 @@
 import { Schema, SchemaTypes, model } from "mongoose";
 
-const DOCUMENT_NAME = "APIKey";
-const COLLECTION_NAME = "APIKeys";
+import { APIKEY_SCHEMA_CONST } from "../configs/schema.const.config.js";
+const { DOCUMENT_NAME, COLLECTION_NAME } = APIKEY_SCHEMA_CONST;
 
 const APIKeySchema = new Schema(
   {

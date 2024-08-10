@@ -81,6 +81,20 @@ const UserController = {
       metadata: req.user,
     });
   },
+  async userUpgradeToShop(req, res) {
+    const userId = req.user._id;
+    const shopData = req.body;
+    const user = await UserService.userUpgradeToShop(userId, shopData);
+    const [access, refresh] = await Promise.all([
+      JWTService.access.sign(user),
+      JWTService.refresh.sign(user, user._id),
+    ]);
+    return res.fly({
+      status: 200,
+      message: "Upgrade user to shop successfully",
+      metadata: { user, tokens: { access, refresh } },
+    });
+  },
 };
 
 export default UserController;

@@ -49,6 +49,12 @@ UserRouter.get(
   passport.authenticate("github"),
   controller(UserController.social.gitHubCallback)
 );
-UserRouter.get("/profile", authenticate, controller(UserController.profile));
+UserRouter.use(authenticate);
+UserRouter.get("/profile", controller(UserController.profile));
+UserRouter.post(
+  "/user_upgrade_to_shop",
+  validate(UserValidate.userUpgradeToShop),
+  controller(UserController.userUpgradeToShop)
+);
 
 export default UserRouter;

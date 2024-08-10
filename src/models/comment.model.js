@@ -1,11 +1,16 @@
 import { Schema, SchemaTypes, model } from "mongoose";
+import {
+  COMMENT_SCHEMA_CONST,
+  PRODUCT_SCHEMA_CONST,
+} from "../configs/schema.const.config.js";
 
-const DOCUMENT_NAME = "Comment";
-const COLLECTION_NAME = "Comments";
-
+const { COLLECTION_NAME, DOCUMENT_NAME } = COMMENT_SCHEMA_CONST;
 const commentSchema = new Schema(
   {
-    comment_productId: { type: SchemaTypes.ObjectId, ref: "Product" },
+    comment_productId: {
+      type: SchemaTypes.ObjectId,
+      ref: PRODUCT_SCHEMA_CONST.DOCUMENT_NAME,
+    },
     comment_useId: { type: SchemaTypes.Number },
     comment_content: { type: SchemaTypes.String, default: "" },
     comment_parentId: { type: SchemaTypes.ObjectId, ref: DOCUMENT_NAME },

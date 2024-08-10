@@ -1,8 +1,8 @@
 import { Schema, SchemaTypes, model } from "mongoose";
 import env from "../configs/env.config.js";
 
-const DOCUMENT_NAME = "Token";
-const COLLECTION_NAME = "Tokens";
+import { TOKEN_SCHEMA_CONST } from "../configs/schema.const.config.js";
+const { DOCUMENT_NAME, COLLECTION_NAME } = TOKEN_SCHEMA_CONST;
 
 const tokenSchema = new Schema(
   {

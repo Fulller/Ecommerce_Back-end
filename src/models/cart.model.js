@@ -1,15 +1,14 @@
 import { Schema, SchemaTypes, model } from "mongoose";
-import { CART_STATES } from "../configs/const.config.js";
 
-const DOCUMENT_NAME = "Cart";
-const COLLECTION_NAME = "Carts";
+import { CART_SCHEMA_CONST } from "../configs/schema.const.config.js";
+const { DOCUMENT_NAME, COLLECTION_NAME, STATE } = CART_SCHEMA_CONST;
 
 const cartSchema = new Schema(
   {
     cart_state: {
       type: SchemaTypes.String,
-      enum: Object.values(CART_STATES),
-      default: CART_STATES.ACTIVE,
+      enum: Object.values(STATE),
+      default: STATE.ACTIVE,
     },
     cart_products: {
       type: [SchemaTypes.Mixed],
@@ -17,7 +16,6 @@ const cartSchema = new Schema(
       required: true,
     },
     cart_count_products: { type: SchemaTypes.Number, default: 0 },
-    // ref: "User"
     cart_userId: { type: SchemaTypes.Number, required: true },
   },
   { timestamps: true, collection: COLLECTION_NAME }

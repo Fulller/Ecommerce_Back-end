@@ -1,12 +1,16 @@
 import { Schema, SchemaTypes, model } from "mongoose";
 import slugify from "slugify";
+import {
+  PRODUCT_SCHEMA_CONST,
+  SHOP_SCHEMA_CONST,
+} from "../configs/schema.const.config.js";
 
-const DOCUMENT_NAME = "Product";
-const COLLECTION_NAME = "Products";
-const DOCUMENT_NAME_CLOTHING = "Clothing";
-const COLLECTION_NAME_CLOTHING = "Clothes";
-const DOCUMENT_NAME_ELECTRONIC = "Electronic";
-const COLLECTION_NAME_ELECTRONIC = "Electronics";
+const { COLLECTION_NAME, DOCUMENT_NAME, CLOTHING, ELECTRONIC } =
+  PRODUCT_SCHEMA_CONST;
+const DOCUMENT_NAME_CLOTHING = CLOTHING.DOCUMENT_NAME;
+const COLLECTION_NAME_CLOTHING = CLOTHING.COLLECTION_NAME;
+const DOCUMENT_NAME_ELECTRONIC = ELECTRONIC.DOCUMENT_NAME;
+const COLLECTION_NAME_ELECTRONIC = ELECTRONIC.COLLECTION_NAME;
 
 const productSchema = new Schema(
   {
@@ -39,7 +43,7 @@ const productSchema = new Schema(
     },
     product_shop: {
       type: SchemaTypes.ObjectId,
-      ref: "Shop",
+      ref: SHOP_SCHEMA_CONST.DOCUMENT_NAME,
     },
     product_attributes: {
       type: SchemaTypes.Mixed,
@@ -84,7 +88,7 @@ const clothingSchema = new Schema(
     material: { type: SchemaTypes.String },
     shop: {
       type: SchemaTypes.ObjectId,
-      ref: "Shop",
+      ref: SHOP_SCHEMA_CONST.DOCUMENT_NAME,
     },
   },
   { timestamps: true, collection: COLLECTION_NAME_CLOTHING }
@@ -97,7 +101,7 @@ const electronicSchema = new Schema(
     color: { type: SchemaTypes.String },
     shop: {
       type: SchemaTypes.ObjectId,
-      ref: "Shop",
+      ref: SHOP_SCHEMA_CONST.DOCUMENT_NAME,
     },
   },
   { timestamps: true, collection: COLLECTION_NAME_ELECTRONIC }

@@ -1,8 +1,7 @@
 import { Schema, SchemaTypes, model } from "mongoose";
+import { SKU_SCHEMA_CONST } from "../configs/schema.const.config.js";
 
-const DOCUMENT_NAME = "SKU";
-const COLLECTION_NAME = "SKUs";
-
+const { DOCUMENT_NAME, COLLECTION_NAME } = SKU_SCHEMA_CONST;
 const SKUSchema = new Schema(
   {
     sku_spu: { type: SchemaTypes.ObjectId, required: true },

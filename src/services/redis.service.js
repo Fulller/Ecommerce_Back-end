@@ -4,8 +4,8 @@ const RedisService = {
   otpPath(email) {
     return `otp:${email}`;
   },
-  forgotPasswordOTPPath(email) {
-    return `forgot_password_otp:${email}`;
+  forgotPasswordOTPPath(token) {
+    return `forgot_password_otp:${token}`;
   },
   saveOTP({ email, expire = 60, token }) {
     redisClient.set(RedisService.otpPath(email), token, {
@@ -14,7 +14,7 @@ const RedisService = {
     });
   },
   saveFotgotPasswordOTP({ email, expire = 60, token }) {
-    redisClient.set(RedisService.forgotPasswordOTPPath(email), token, {
+    redisClient.set(RedisService.forgotPasswordOTPPath(token), email, {
       EX: expire,
       NX: true,
     });
@@ -22,14 +22,14 @@ const RedisService = {
   async getOTP({ email }) {
     return await redisClient.get(RedisService.otpPath(email));
   },
-  async getFotgotPasswordOTP({ email }) {
-    return await redisClient.get(RedisService.forgotPasswordOTPPath(email));
+  async getFotgotPasswordOTP({ token }) {
+    return await redisClient.get(RedisService.forgotPasswordOTPPath(token));
   },
   async deleteOTP({ email }) {
     return await redisClient.del(RedisService.otpPath(email));
   },
-  async deleteFotgotPasswordOTP({ email }) {
-    return await redisClient.del(RedisService.forgotPasswordOTPPath(email));
+  async deleteFotgotPasswordOTP({ token }) {
+    return await redisClient.del(RedisService.forgotPasswordOTPPath(token));
   },
 };
 export default RedisService;

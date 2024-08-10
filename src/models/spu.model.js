@@ -1,7 +1,12 @@
 import { Schema, SchemaTypes, model } from "mongoose";
 
-const DOCUMENT_NAME = "SPU";
-const COLLECTION_NAME = "SPUs";
+import {
+  SPU_SCHEMA_CONST,
+  SKU_SCHEMA_CONST,
+  SHOP_SCHEMA_CONST,
+} from "../configs/schema.const.config.js";
+
+const { DOCUMENT_NAME, COLLECTION_NAME } = SPU_SCHEMA_CONST;
 
 const SPUSchema = new Schema(
   {
@@ -11,7 +16,11 @@ const SPUSchema = new Schema(
     spu_category: { type: [SchemaTypes.String], required: true },
     spu_brand: { type: SchemaTypes.String, required: true },
     spu_images: { type: [SchemaTypes.String], required: true },
-    spu_shop: { type: SchemaTypes.ObjectId, ref: "Shop", required: true },
+    spu_shop: {
+      type: SchemaTypes.ObjectId,
+      ref: SHOP_SCHEMA_CONST.DOCUMENT_NAME,
+      required: true,
+    },
     spu_variations: [
       {
         name: SchemaTypes.String,
@@ -19,7 +28,13 @@ const SPUSchema = new Schema(
         options: [SchemaTypes.String],
       },
     ],
-    spu_skus: [{ type: SchemaTypes.ObjectId, ref: "SKU", default: [] }],
+    spu_skus: [
+      {
+        type: SchemaTypes.ObjectId,
+        ref: SKU_SCHEMA_CONST.DOCUMENT_NAME,
+        default: [],
+      },
+    ],
   },
   { timestamps: true, collection: COLLECTION_NAME }
 );

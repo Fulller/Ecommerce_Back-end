@@ -1,9 +1,12 @@
-import User from "../models/user.model.js";
 import UserRepository from "../models/repositories/user.repo.js";
+import ShopRepository from "../models/repositories/shop.repo.js";
+import RoleRepository from "../models/repositories/role.repo.js";
+import ShopService from "./shop.service.js";
 import MailerSevice from "./mailer.service.js";
 import OTPService from "./otp.service.js";
 import createHttpError from "http-errors";
 import env from "../configs/env.config.js";
+import { ROLE_SCHEMA_CONST } from "../configs/schema.const.config.js";
 import { pickAccountData, generateRandomPassword } from "../utils/index.js";
 import bcrypt from "bcrypt";
 import _ from "lodash";
@@ -36,13 +39,9 @@ const UserService = {
     const token = await OTPService.generateForgotPasswordOTP({ email });
     MailerSevice.sendMailForgotPaswordOTP(email, token);
   },
-  async afterForgotPassword({ email, token, password }) {
-    const user = await UserRepository.findUserFromLocalByEmail(email);
-    if (!user) {
-      throw createHttpError(400, "Email does not exist");
-    }
-    await OTPService.verifyForgotPasswordOTP({ email, token });
-    await UserRepository.newPasswordForForgot({ email, password });
+  async afterForgotPassword({ token, password }) {
+    const email = await OTPService.verifyForgotPasswordOTP({ token });
+    const user = await UserRepository.newPasswordForForgot({ email, password });
     return await UserRepository.userFormatForToken(user);
   },
   async initAdmin({ email, password }) {
@@ -65,6 +64,29 @@ const UserService = {
   },
   async signUpFromSocial(profile) {
     return pickAccountData(await UserRepository.createFromSocial(profile));
+  },
+  async userUpgradeToShop(userId, shopData) {
+    let [isUser, user, shop] = await Promise.all([
+      UserRepository.isRole(userId, ROLE_SCHEMA_CONST.NAME.USER),
+      UserRepository.findById(userId),
+      ShopRepository.findByOwnerId(userId),
+    ]);
+    if (!isUser) {
+      throw createHttpError("400", "User is not user role");
+    }
+    if (shop?.shop_verify) {
+      throw createHttpError("400", "Shop has aready been verified");
+    }
+    shop = await ShopService.userUpgradeToShop(userId, shopData);
+    if (!shop) {
+      throw createHttpError("400", "ShopService :: userUpgradeToShop failed");
+    }
+    const roleShopId = await RoleRepository.findRoleIdByName(
+      ROLE_SCHEMA_CONST.NAME.SHOP
+    );
+    user.usr_role = roleShopId;
+    await user.save();
+    return UserRepository.userFormatForToken(user);
   },
 };
 export default UserService;

@@ -22,15 +22,13 @@ const OTPService = {
     }
     await RedisService.deleteOTP({ email });
   },
-  async verifyForgotPasswordOTP({ email, token }) {
-    const storedToken = await RedisService.getFotgotPasswordOTP({ email });
-    if (!storedToken) {
+  async verifyForgotPasswordOTP({ token }) {
+    const storedEmail = await RedisService.getFotgotPasswordOTP({ token });
+    if (!storedEmail) {
       throw createHttpError(404, "Forgot password OTP not found");
     }
-    if (storedToken != token) {
-      throw createHttpError(404, "Forgot password OTP was wrong");
-    }
-    await RedisService.deleteFotgotPasswordOTP({ email });
+    await RedisService.deleteFotgotPasswordOTP({ token });
+    return storedEmail;
   },
 };
 export default OTPService;
