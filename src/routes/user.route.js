@@ -49,6 +49,11 @@ UserRouter.get(
   passport.authenticate("github"),
   controller(UserController.social.gitHubCallback)
 );
+UserRouter.post(
+  "/refresh-token",
+  validate(UserValidate.refreshToken),
+  controller(UserController.refreshToken)
+);
 UserRouter.use(authenticate);
 UserRouter.get("/profile", controller(UserController.profile));
 UserRouter.post(

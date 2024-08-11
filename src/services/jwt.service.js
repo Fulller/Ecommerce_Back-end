@@ -1,7 +1,7 @@
+import RedisService from "./redis.service.js";
 import jwt from "jsonwebtoken";
 import env from "../configs/env.config.js";
 import createHttpError from "http-errors";
-import { Token } from "../models/index.js";
 import { pickAccountData } from "../utils/index.js";
 import _ from "lodash";
 
@@ -11,11 +11,12 @@ const {
   access_ex: ACCESS_EX,
   refresh_ex: REFRESH_EX,
 } = env.auth.jwt;
+const RedisRefreskTokenService = RedisService.refreskToken;
 
 const JWTService = {
   access: {
-    sign: (payload) => {
-      return jwt.sign(pickAccountData(payload), ACCESS_SECRECT_KEY, {
+    sign: (user) => {
+      return jwt.sign(pickAccountData(user), ACCESS_SECRECT_KEY, {
         expiresIn: ACCESS_EX,
         algorithm: "HS256",
       });
@@ -25,45 +26,32 @@ const JWTService = {
     },
   },
   refresh: {
-    sign: async (payload, user) => {
-      const token = jwt.sign(pickAccountData(payload), REFRESH_SECRECT_KEY, {
+    sign: async (user, userId) => {
+      const token = jwt.sign(pickAccountData(user), REFRESH_SECRECT_KEY, {
         expiresIn: REFRESH_EX,
         algorithm: "HS256",
       });
-      const expiresAt = new Date(Date.now() + REFRESH_EX * 1000);
-      await Token.findOneAndUpdate(
-        { user },
-        {
-          user,
-          token,
-          expiresAt,
-        },
-        { upsert: true }
-      );
+      RedisRefreskTokenService.save(userId, token, { exprire: REFRESH_EX });
       return token;
     },
     verify: async (token) => {
-      try {
-        const payload = await jwt.verify(token, REFRESH_SECRECT_KEY);
-        const storedRefreshToken = await Token.findOne({
-          user: payload._id,
-          token,
-        });
-        if (!storedRefreshToken || storedRefreshToken.expiresAt < new Date()) {
-          return null;
-        }
-        return payload;
-      } catch {
-        return null;
+      const user = await jwt.verify(token, REFRESH_SECRECT_KEY);
+      if (!user) {
+        throw createHttpError(404, "JWTService :: Invalid token");
       }
+      const isExist = await RedisRefreskTokenService.exist(user._id, token);
+      if (!isExist) {
+        throw createHttpError(404, "JWTService :: Token is not exist ");
+      }
+      return user;
     },
     delete: async (token) => {
-      const payload = await JWTService.refresh.verify(token);
-      if (!payload) throw createHttpError(400, "Token invalid");
-      return await Token.deleteOne({ user: payload._id });
+      const user = await JWTService.refresh.verify(token);
+      if (!user) throw createHttpError(400, "Token invalid");
+      return await RedisRefreskTokenService.delete(user._id, token);
     },
-    findByUser: async (user) => {
-      return await Token.findOne({ user }).lean();
+    findByUser: async (userId) => {
+      return await RedisRefreskTokenService.get(userId);
     },
   },
   refreshToken: async function (refreshTokenString) {

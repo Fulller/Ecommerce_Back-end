@@ -95,6 +95,16 @@ const UserController = {
       metadata: { user, tokens: { access, refresh } },
     });
   },
+  async refreshToken(req, res) {
+    const { refreshtoken } = req.body;
+    const user = await JWTService.refresh.verify(refreshtoken);
+    const access = await JWTService.access.sign(user);
+    return res.fly({
+      status: 200,
+      message: "Refresh new accesstoken successfully",
+      metadata: { user, tokens: { access } },
+    });
+  },
 };
 
 export default UserController;

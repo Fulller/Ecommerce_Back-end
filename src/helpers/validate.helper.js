@@ -174,6 +174,9 @@ const UserValidate = {
   userUpgradeToShop: Joi.object({
     shop_name: Joi.string().required(),
   }),
+  refreshToken: Joi.object({
+    refreshtoken: Joi.string().required(),
+  }),
 };
 const SPUValidate = {
   create: Joi.object({
