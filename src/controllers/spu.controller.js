@@ -2,12 +2,16 @@ import SPUService from "../services/spu.service.js";
 import _ from "lodash";
 
 const SPUController = {
-  async create(req, res) {
+  async createNew(req, res) {
+    const ownerId = req.user._id;
+    const spuData = req.body;
+    const [spu, skuList] = await SPUService.newSPU(spuData, ownerId);
     return res.fly({
       status: 201,
-      metadata: await SPUService.create(
-        _.set(req.body, "spu_shop", req.user._id)
-      ),
+      metadata: {
+        spu,
+        skuList,
+      },
     });
   },
   async get(req, res) {

@@ -130,6 +130,14 @@ const SKU_SCHEMA_CONST = {
 const SPU_SCHEMA_CONST = {
   DOCUMENT_NAME: "SPU",
   COLLECTION_NAME: "SPUs",
+  IMAGE_RATIO: {
+    ONE_ONE: "1:1",
+    THREE_FOUR: "3:4",
+  },
+  USAGE_STATUS: {
+    NEW: "new",
+    OLD: "old",
+  },
 };
 const TEMPLATE_SCHEMA_CONST = {
   DOCUMENT_NAME: "Template",

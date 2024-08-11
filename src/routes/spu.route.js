@@ -13,9 +13,9 @@ const SPURouter = Router();
 SPURouter.use(authenticate);
 SPURouter.post(
   "/",
-  validate(SPUValidate.create),
-  controller(SPUController.create)
+  checkPermission({ resource: "product", action: "create", possession: "own" }),
+  validate(SPUValidate.createNew),
+  controller(SPUController.createNew)
 );
-SPURouter.get("/:spu_id", controller(SPUController.get));
 
 export default SPURouter;

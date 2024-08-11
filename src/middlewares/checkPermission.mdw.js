@@ -2,7 +2,7 @@ import { getAccessControl } from "../configs/accesscontrol.config.js";
 import createHttpError from "http-errors";
 import _ from "lodash";
 
-function checkPermission({ action, resource, possession }) {
+function checkPermission({ action, resource, possession = "any" }) {
   return async function (req, res, next) {
     try {
       const userRole = _.get(req, "user.usr_role.rol_name");

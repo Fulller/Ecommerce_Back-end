@@ -1,12 +1,10 @@
 import Joi from "joi";
+import { HEADER } from "../configs/const.config.js";
 import {
-  HEADER,
-  DISCOUNT_TYPES,
-  DISCOUNT_APPLIES_TO,
-  ROLE_STATUS,
-  ROLE_ACTIONS,
-  ROLE_POSSESSIONS,
-} from "../configs/const.config.js";
+  ROLE_SCHEMA_CONST,
+  DISCOUNT_SCHEMA_CONST,
+  SPU_SCHEMA_CONST,
+} from "../configs/schema.const.config.js";
 
 const Joi_ObjectId = Joi.string()
   .pattern(new RegExp("^[0-9a-fA-F]{24}$"))
@@ -53,7 +51,7 @@ const DiscountValidate = {
     name: Joi.string().required(),
     description: Joi.string().required(),
     type: Joi.string()
-      .valid(...Object.values(DISCOUNT_TYPES))
+      .valid(...Object.values(DISCOUNT_SCHEMA_CONST.TYPE))
       .required(),
     value: Joi.number().required(),
     code: Joi.string(),
@@ -70,7 +68,7 @@ const DiscountValidate = {
     min_order_value: Joi.number().required(),
     is_active: Joi.bool(),
     applies_to: Joi.string()
-      .valid(...Object.values(DISCOUNT_APPLIES_TO))
+      .valid(...Object.values(DISCOUNT_SCHEMA_CONST.APPLY_TO))
       .required(),
     product_ids: Joi.array(),
   }).with("start_date", "end_date"),
@@ -100,21 +98,20 @@ const UploadValidate = {
     fileUrl: Joi.string().uri().required(),
   }),
 };
-
 const RBACValidate = {
   newRole: Joi.object({
     rol_name: Joi.string().required(),
     rol_slug: Joi.string().required(),
     rol_status: Joi.string()
-      .valid(...Object.values(ROLE_STATUS))
+      .valid(...Object.values(ROLE_SCHEMA_CONST.STATUS))
       .required(),
     rol_grants: Joi.array().items({
       resource: Joi_ObjectId,
       action: Joi.string()
-        .valid(...Object.values(ROLE_ACTIONS))
+        .valid(...Object.values(ROLE_SCHEMA_CONST.ACTIONS))
         .required(),
       possession: Joi.string()
-        .valid(...Object.values(ROLE_POSSESSIONS))
+        .valid(...Object.values(ROLE_SCHEMA_CONST.POSSESSIONS))
         .required(),
       attribute: Joi.string(),
     }),
@@ -128,10 +125,10 @@ const RBACValidate = {
     role_id: Joi_ObjectId,
     resource: Joi_ObjectId,
     action: Joi.string()
-      .valid(...Object.values(ROLE_ACTIONS))
+      .valid(...Object.values(ROLE_SCHEMA_CONST.ACTIONS))
       .required(),
     possession: Joi.string()
-      .valid(...Object.values(ROLE_POSSESSIONS))
+      .valid(...Object.values(ROLE_SCHEMA_CONST.POSSESSIONS))
       .required(),
     attribute: Joi.string(),
   }),
@@ -143,8 +140,10 @@ const RBACValidate = {
     role_id: Joi_ObjectId,
     grant_id: Joi_ObjectId,
     resource: Joi_ObjectId,
-    action: Joi.string().valid(...Object.values(ROLE_ACTIONS)),
-    possession: Joi.string().valid(...Object.values(ROLE_POSSESSIONS)),
+    action: Joi.string().valid(...Object.values(ROLE_SCHEMA_CONST.ACTIONS)),
+    possession: Joi.string().valid(
+      ...Object.values(ROLE_SCHEMA_CONST.POSSESSIONS)
+    ),
     attribute: Joi.string(),
   }),
 };
@@ -179,88 +178,74 @@ const UserValidate = {
   }),
 };
 const SPUValidate = {
-  create: Joi.object({
-    spu_slug: Joi.string().required().messages({
-      "string.base": "Slug phải là một chuỗi ký tự",
-      "string.empty": "Slug không được để trống",
-      "any.required": "Slug là bắt buộc",
+  createNew: Joi.object({
+    spu_image_ratio: Joi.string()
+      .valid(...Object.values(SPU_SCHEMA_CONST.IMAGE_RATIO))
+      .required(),
+    spu_images: Joi.array().items(Joi.string().uri().required()).required(),
+    spu_thumb: Joi.string().uri().required(),
+    spu_video: Joi.string().uri().required(),
+    spu_name: Joi.string().required(),
+    spu_categories: Joi.array().items(Joi.string()).required(),
+    spu_description: Joi.string().required(),
+    spu_attributes: Joi.any().required(),
+    sku_price: Joi.number().when("spu_variations", {
+      is: Joi.array().length(0),
+      then: Joi.required(),
     }),
-    spu_name: Joi.string().required().messages({
-      "string.base": "Tên phải là một chuỗi ký tự",
-      "string.empty": "Tên không được để trống",
-      "any.required": "Tên là bắt buộc",
-    }),
-    spu_description: Joi.string().required().messages({
-      "string.base": "Mô tả phải là một chuỗi ký tự",
-      "string.empty": "Mô tả không được để trống",
-      "any.required": "Mô tả là bắt buộc",
-    }),
-    spu_category: Joi.array()
-      .items(Joi.string().required())
-      .required()
-      .messages({
-        "array.base": "Danh mục phải là một mảng các chuỗi",
-        "array.empty": "Danh mục không được để trống",
-        "any.required": "Danh mục là bắt buộc",
+    sku_stock: Joi.number()
+      .integer()
+      .min(0)
+      .when("spu_variations", {
+        is: Joi.array().length(0),
+        then: Joi.required(),
       }),
-    spu_brand: Joi.string().required().messages({
-      "string.base": "Thương hiệu phải là một chuỗi ký tự",
-      "string.empty": "Thương hiệu không được để trống",
-      "any.required": "Thương hiệu là bắt buộc",
+    spu_is_preorder: Joi.boolean().required(),
+    spu_weight_for_sku: Joi.boolean().required(),
+    spu_weight: Joi.number().when("spu_weight_for_sku", {
+      is: false,
+      then: Joi.required(),
     }),
-    spu_images: Joi.array()
-      .items(Joi.string().uri().required())
-      .required()
-      .messages({
-        "array.base": "Ảnh phải là một mảng các URI chuỗi",
-        "array.empty": "Ảnh không được để trống",
-        "any.required": "Ảnh là bắt buộc",
-      }),
     spu_variations: Joi.array().items(
       Joi.object({
-        name: Joi.string().required().messages({
-          "string.base": "Tên biến thể phải là một chuỗi ký tự",
-          "string.empty": "Tên biến thể không được để trống",
-          "any.required": "Tên biến thể là bắt buộc",
-        }),
-        images: Joi.array().items(Joi.string().uri()).messages({
-          "array.base": "Ảnh của biến thể phải là một mảng các URI chuỗi",
-        }),
-        options: Joi.array().items(Joi.string()).messages({
-          "array.base": "Các tùy chọn của biến thể phải là một mảng các chuỗi",
-        }),
+        name: Joi.string().required(),
+        options: Joi.array().items(Joi.string().required()).required(),
       })
     ),
+    sku_list: Joi.array()
+      .items(
+        Joi.object({
+          sku_tier_idx: Joi.array().items(Joi.number()).default([0]),
+          sku_default: Joi.boolean().default(false),
+          sku_price: Joi.number().positive().required(),
+          sku_stock: Joi.number().integer().min(0).required(),
+          sku_image: Joi.string().uri().required(),
+          sku_weight: Joi.number().when("..spu_weight_for_sku", {
+            is: true,
+            then: Joi.required(),
+          }),
+        })
+      )
+      .when("spu_variations", {
+        is: Joi.array().min(1),
+        then: Joi.array().min(1).required(),
+        otherwise: Joi.array().length(0),
+      })
+      .custom((value, helpers) => {
+        const spu_variations = helpers.state.ancestors[0].spu_variations || [];
+        const allValid = value.every(
+          (item) => item.sku_tier_idx.length === spu_variations.length
+        );
+        if (!allValid) {
+          return helpers.error("any.custom", {
+            message: "sku_tier_idx length must match spu_variations length",
+          });
+        }
+        return value;
+      }),
   }),
 };
-const SKUValidate = {
-  create: Joi.object({
-    sku_spu: Joi_ObjectId,
-    sku_tier_idx: Joi.array()
-      .items(Joi.number())
-      .default([0])
-      .label("Tier Index"),
-    sku_default: Joi.boolean().default(false).label("Default SKU"),
-    sku_slug: Joi.string().required().label("SKU Slug"),
-    sku_price: Joi.number().positive().required().label("Price"),
-    sku_stock: Joi.number().integer().min(0).required().label("Stock"),
-    sku_images: Joi.array()
-      .items(Joi.string().uri())
-      .default([])
-      .label("Images"),
-    isPublished: Joi.boolean().default(false).label("Published Status"),
-    isDraft: Joi.boolean().default(true).label("Draft Status"),
-    isDeleted: Joi.boolean().default(false).label("Deleted Status"),
-  }),
-  lookup: Joi.object({
-    sku_spu: Joi_ObjectId,
-    sku_tier_idx: Joi.array()
-      .items(Joi.number())
-      .default([0])
-      .label("Tier Index"),
-  }),
-};
-
+const SKUValidate = {};
 export {
   ShopValidate,
   ProductValidate,

@@ -1,8 +1,8 @@
 import Shop from "../shop.model.js";
 
-const ShopRepo = {
+const ShopRepository = {
   async findByOwnerId(ownerId) {
     return Shop.findOne({ shop_owner: ownerId });
   },
 };
-export default ShopRepo;
+export default ShopRepository;

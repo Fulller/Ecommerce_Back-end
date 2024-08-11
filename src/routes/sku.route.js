@@ -11,15 +11,5 @@ import {
 const SKURouter = Router();
 
 SKURouter.use(authenticate);
-SKURouter.post(
-  "/",
-  validate(SKUValidate.create),
-  controller(SKUController.create)
-);
-SKURouter.post(
-  "/lookup",
-  validate(SKUValidate.lookup),
-  controller(SKUController.lookup)
-);
 
 export default SKURouter;
