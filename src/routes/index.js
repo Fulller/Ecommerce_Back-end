@@ -22,6 +22,7 @@ import TemplateRouter from "./template.route.js";
 import UserRouter from "./user.route.js";
 import SPURouter from "./spu.route.js";
 import SKURouter from "./sku.route.js";
+import CategoryRouter from "./category.route.js";
 
 import { PERMISSION } from "../configs/const.config.js";
 const router = Router();
@@ -47,6 +48,7 @@ router.use("/mailer", MailerRouter);
 router.use("/template", TemplateRouter);
 router.use("/spu", SPURouter);
 router.use("/sku", SKURouter);
+router.use("/category", CategoryRouter);
 
 router.use(notFound);
 router.use(handleError);

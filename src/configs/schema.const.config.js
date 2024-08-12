@@ -10,7 +10,7 @@ const USER_SCHEMA_CONST = {
 const ROLE_SCHEMA_CONST = {
   DOCUMENT_NAME: "Role",
   COLLECTION_NAME: "Roles",
-  NAME: { USER: "user", SHOP: "shop", ADMIN: "admin" },
+  NAME: { USER: "user", SHOP: "shop", ADMIN: "admin", GUEST: "guest" },
   STATUS: {
     PENDING: "peding",
     ACTIVE: "active",
@@ -152,6 +152,10 @@ const TOKEN_SCHEMA_CONST = {
   DOCUMENT_NAME: "Token",
   COLLECTION_NAME: "Tokens",
 };
+const CATEGORY_SCHEMA_CONST = {
+  DOCUMENT_NAME: "Category",
+  COLLECTION_NAME: "Categories",
+};
 export {
   USER_SCHEMA_CONST,
   SHOP_SCHEMA_CONST,
@@ -172,4 +176,5 @@ export {
   SPU_SCHEMA_CONST,
   TEMPLATE_SCHEMA_CONST,
   TOKEN_SCHEMA_CONST,
+  CATEGORY_SCHEMA_CONST,
 };

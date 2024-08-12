@@ -22,12 +22,12 @@ UserRouter.get(
   controller(UserController.email.verifySignUpOTP)
 );
 UserRouter.post(
-  "/email/before_forgot_password",
+  "/email/before-forgot-password",
   validate(UserValidate.beforeForgotPassword),
   controller(UserController.email.beforeForgotPassword)
 );
 UserRouter.post(
-  "/email/after_for_forgot",
+  "/email/after-for-forgot",
   validate(UserValidate.afterForgotPassword),
   controller(UserController.email.afterForgotPassword)
 );
@@ -50,14 +50,14 @@ UserRouter.get(
   controller(UserController.social.gitHubCallback)
 );
 UserRouter.post(
-  "/refresh-token",
+  "/refresh-access-token",
   validate(UserValidate.refreshToken),
   controller(UserController.refreshToken)
 );
 UserRouter.use(authenticate);
 UserRouter.get("/profile", controller(UserController.profile));
 UserRouter.post(
-  "/user_upgrade_to_shop",
+  "/user-upgrade-to-shop",
   validate(UserValidate.userUpgradeToShop),
   controller(UserController.userUpgradeToShop)
 );

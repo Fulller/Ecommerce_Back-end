@@ -14,10 +14,12 @@ const SPUController = {
       },
     });
   },
-  async get(req, res) {
+  async getByShop(req, res) {
+    const ownerId = req.user._id;
+    const spuId = req.params.spuId;
     return res.fly({
       status: 200,
-      metadata: await SPUService.get(req.params.spu_id),
+      metadata: await SPUService.getByShop(spuId, ownerId),
     });
   },
 };

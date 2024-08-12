@@ -66,6 +66,12 @@ async function initRole() {
       rol_name: ROLE_SCHEMA_CONST.NAME.USER,
       rol_slug: "r001",
       rol_description: "User app",
+      rol_grants: [ROLE_SCHEMA_CONST.NAME.GUEST],
+    },
+    {
+      rol_name: ROLE_SCHEMA_CONST.NAME.GUEST,
+      rol_slug: "r004",
+      rol_description: "Guest app",
       rol_grants: [],
     },
   ];

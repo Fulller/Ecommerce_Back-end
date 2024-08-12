@@ -12,6 +12,7 @@ const Joi_ObjectId = Joi.string()
 const Joi_HTML = Joi.string()
   .pattern(/<\/?[a-z][\s\S]*>/i, "HTML tags")
   .required();
+
 const APIKeyValidate = {
   add: Joi.object({
     key: Joi.string().required(),
@@ -186,9 +187,15 @@ const SPUValidate = {
     spu_thumb: Joi.string().uri().required(),
     spu_video: Joi.string().uri().required(),
     spu_name: Joi.string().required(),
-    spu_categories: Joi.array().items(Joi.string()).required(),
+    spu_category: Joi_ObjectId,
     spu_description: Joi.string().required(),
-    spu_attributes: Joi.any().required(),
+    spu_attributes: Joi.array().items(
+      Joi.object({
+        name: Joi.string().required(),
+        value: Joi.string().required(),
+        unit: Joi.any(),
+      }).required()
+    ),
     sku_price: Joi.number().when("spu_variations", {
       is: Joi.array().length(0),
       then: Joi.required(),
@@ -201,11 +208,14 @@ const SPUValidate = {
         then: Joi.required(),
       }),
     spu_is_preorder: Joi.boolean().required(),
-    spu_weight_for_sku: Joi.boolean().required(),
+    spu_is_weight_for_sku: Joi.boolean().required(),
     spu_weight: Joi.number().when("spu_weight_for_sku", {
       is: false,
       then: Joi.required(),
     }),
+    spu_usage_status: Joi.string()
+      .valid(...Object.values(SPU_SCHEMA_CONST.USAGE_STATUS))
+      .required(),
     spu_variations: Joi.array().items(
       Joi.object({
         name: Joi.string().required(),
@@ -244,8 +254,30 @@ const SPUValidate = {
         return value;
       }),
   }),
+  getByShop: Joi.object({
+    spuId: Joi_ObjectId,
+  }),
 };
 const SKUValidate = {};
+const CategoryValidate = {
+  addCategory: Joi.object({
+    cat_name: Joi.string().required(),
+    cat_parent: Joi.any(),
+    cat_attributes: Joi.array().items(
+      Joi.object({
+        att_name: Joi.string().required(),
+        att_options: Joi.array().items(Joi.string().required()).required(),
+        att_is_enter_by_hand: Joi.boolean(),
+        att_units: Joi.array().items(Joi.string().required()),
+      })
+    ),
+  }),
+  addCategories: Joi.array().required(),
+  getCategoryAttributes: Joi.object({
+    categoryId: Joi_ObjectId,
+  }),
+};
+
 export {
   ShopValidate,
   ProductValidate,
@@ -258,4 +290,5 @@ export {
   UserValidate,
   SPUValidate,
   SKUValidate,
+  CategoryValidate,
 };

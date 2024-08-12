@@ -4,6 +4,7 @@ import {
   SPU_SCHEMA_CONST,
   SKU_SCHEMA_CONST,
   SHOP_SCHEMA_CONST,
+  CATEGORY_SCHEMA_CONST,
 } from "../configs/schema.const.config.js";
 
 const { DOCUMENT_NAME, COLLECTION_NAME, IMAGE_RATIO, USAGE_STATUS } =
@@ -26,9 +27,19 @@ const SPUSchema = new Schema(
     spu_video: { type: SchemaTypes.String },
     spu_name: { type: SchemaTypes.String, required: true },
     spu_slug: { type: SchemaTypes.String, required: true, unique: true },
-    spu_categories: { type: [SchemaTypes.String], required: true },
+    spu_category: {
+      type: SchemaTypes.ObjectId,
+      ref: CATEGORY_SCHEMA_CONST.DOCUMENT_NAME,
+      required: true,
+    },
     spu_description: { type: SchemaTypes.String, required: true },
-    spu_attributes: { type: SchemaTypes.Mixed, required: true },
+    spu_attributes: [
+      {
+        name: { type: SchemaTypes.String, require: true },
+        value: { type: SchemaTypes.String, require: true },
+        unit: { type: SchemaTypes.String },
+      },
+    ],
     spu_price: { type: SchemaTypes.Number },
     spu_stock: { type: SchemaTypes.Number },
     spu_is_preorder: { type: SchemaTypes.Boolean, required: false },
@@ -61,5 +72,5 @@ const SPUSchema = new Schema(
   },
   { timestamps: true, collection: COLLECTION_NAME }
 );
-
+SPUSchema.index({ "spu_attributes.name": 1, "spu_attributes.value": 1 });
 export default model(DOCUMENT_NAME, SPUSchema);

@@ -17,5 +17,11 @@ SPURouter.post(
   validate(SPUValidate.createNew),
   controller(SPUController.createNew)
 );
+SPURouter.get(
+  "/:spuId/by-shop",
+  checkPermission({ resource: "product", action: "read", possession: "own" }),
+  validate(SPUValidate.getByShop, "params"),
+  controller(SPUController.getByShop)
+);
 
 export default SPURouter;
