@@ -133,10 +133,12 @@ const SPU_SCHEMA_CONST = {
   IMAGE_RATIO: {
     ONE_ONE: "1:1",
     THREE_FOUR: "3:4",
+    SIXTEEN_NINE: "16:9",
   },
   USAGE_STATUS: {
     NEW: "new",
-    OLD: "old",
+    USED: "used",
+    REFURBISHED: "refurbished",
   },
 };
 const TEMPLATE_SCHEMA_CONST = {

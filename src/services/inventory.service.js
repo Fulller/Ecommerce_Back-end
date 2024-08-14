@@ -1,6 +1,7 @@
 import Inventory from "../models/inventory.model.js";
 import ProductRepo from "../models/repositories/product.repo.js";
 import createHttpError from "http-errors";
+import _ from "lodash";
 
 const InventoryService = {
   async addStockToInventory({
@@ -20,6 +21,21 @@ const InventoryService = {
     };
     const options = { upsert: true, new: true };
     return await Inventory.findOneAndUpdate(query, updateSet, options);
+  },
+  async createForSKU({
+    inven_stock,
+    inven_location = "unknown",
+    inven_reservations = [],
+  }) {
+    try {
+      return Inventory.create({
+        inven_stock,
+        inven_location,
+        inven_reservations,
+      });
+    } catch (err) {
+      throw createHttpError(400, "Error create Inventory");
+    }
   },
 };
 

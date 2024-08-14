@@ -182,76 +182,52 @@ const SPUValidate = {
     spu_image_ratio: Joi.string()
       .valid(...Object.values(SPU_SCHEMA_CONST.IMAGE_RATIO))
       .required(),
-    spu_images: Joi.array().items(Joi.string().uri().required()).required(),
+    spu_images: Joi.array()
+      .items(Joi.string().uri().required())
+      .min(1)
+      .required(),
     spu_thumb: Joi.string().uri().required(),
     spu_video: Joi.string().uri().required(),
-    spu_name: Joi.string().required(),
-    spu_category: Joi_ObjectId,
-    spu_description: Joi.string().required(),
-    spu_attributes: Joi.array().items(
-      Joi.object({
-        name: Joi.string().required(),
-        value: Joi.string().required(),
-        unit: Joi.any(),
-      }).required()
-    ),
-    sku_price: Joi.number().when("spu_variations", {
-      is: Joi.array().length(0),
-      then: Joi.required(),
-    }),
-    sku_stock: Joi.number()
-      .integer()
-      .min(0)
-      .when("spu_variations", {
-        is: Joi.array().length(0),
-        then: Joi.required(),
-      }),
+    spu_name: Joi.string().min(1).max(255).required(),
+    spu_category: Joi_ObjectId.required(),
+    spu_description: Joi.string().min(1).required(),
+    spu_attributes: Joi.array()
+      .items(
+        Joi.object({
+          name: Joi.string().required(),
+          value: Joi.string().required(),
+          unit: Joi.any(),
+        }).required()
+      )
+      .min(1)
+      .required(),
     spu_is_preorder: Joi.boolean().required(),
-    spu_is_weight_for_sku: Joi.boolean().required(),
-    spu_weight: Joi.number().when("spu_weight_for_sku", {
-      is: false,
-      then: Joi.required(),
-    }),
     spu_usage_status: Joi.string()
       .valid(...Object.values(SPU_SCHEMA_CONST.USAGE_STATUS))
       .required(),
-    spu_variations: Joi.array().items(
-      Joi.object({
-        name: Joi.string().required(),
-        options: Joi.array().items(Joi.string().required()).required(),
-      })
-    ),
+    spu_variations: Joi.array()
+      .items(
+        Joi.object({
+          name: Joi.string().required(),
+          options: Joi.array().items(Joi.string().required()).min(1).required(),
+        })
+      )
+      .required(),
     sku_list: Joi.array()
       .items(
         Joi.object({
-          sku_tier_idx: Joi.array().items(Joi.number()).default([0]),
+          sku_tier_idx: Joi.array()
+            .items(Joi.number().integer().min(0))
+            .default([]),
           sku_default: Joi.boolean().default(false),
           sku_price: Joi.number().positive().required(),
           sku_stock: Joi.number().integer().min(0).required(),
           sku_image: Joi.string().uri().required(),
-          sku_weight: Joi.number().when("..spu_weight_for_sku", {
-            is: true,
-            then: Joi.required(),
-          }),
-        })
+          sku_weight: Joi.number().positive().required(),
+        }).required()
       )
-      .when("spu_variations", {
-        is: Joi.array().min(1),
-        then: Joi.array().min(1).required(),
-        otherwise: Joi.array().length(0),
-      })
-      .custom((value, helpers) => {
-        const spu_variations = helpers.state.ancestors[0].spu_variations || [];
-        const allValid = value.every(
-          (item) => item.sku_tier_idx.length === spu_variations.length
-        );
-        if (!allValid) {
-          return helpers.error("any.custom", {
-            message: "sku_tier_idx length must match spu_variations length",
-          });
-        }
-        return value;
-      }),
+      .min(1)
+      .required(),
   }),
   getByShop: Joi.object({
     spuId: Joi_ObjectId,

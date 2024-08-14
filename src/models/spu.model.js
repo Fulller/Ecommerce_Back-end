@@ -40,15 +40,7 @@ const SPUSchema = new Schema(
         unit: { type: SchemaTypes.String },
       },
     ],
-    spu_price: { type: SchemaTypes.Number },
-    spu_stock: { type: SchemaTypes.Number },
     spu_is_preorder: { type: SchemaTypes.Boolean, required: false },
-    spu_is_weight_for_sku: {
-      type: SchemaTypes.Boolean,
-      default: false,
-      required: true,
-    },
-    spu_weight: { type: SchemaTypes.Number },
     spu_usage_status: {
       type: SchemaTypes.String,
       enum: Object.values(USAGE_STATUS),
