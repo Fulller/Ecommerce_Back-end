@@ -20,3 +20,4 @@ export { default as clientAuthenURL } from "./clientAuthenURL.js";
 export { default as generateRandomPassword } from "./generateRandomPassword.js";
 export { default as transformRolesToGrants } from "./transformRolesToGrants.util.js";
 export { getCleanData } from "./lodash.util.js";
+export { default as generateDegitOTP } from "./generateOTP.util.js";

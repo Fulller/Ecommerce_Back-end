@@ -1,14 +1,15 @@
 import RedisService from "./redis.service.js";
+import { generateDegitOTP } from "../utils/index.js";
 import createHttpError from "http-errors";
 
 const OTPService = {
   generateOTP({ email }) {
-    const token = Math.floor(100000 + Math.random() * 900000).toString();
+    const token = generateDegitOTP();
     RedisService.saveOTP({ email, token });
     return token;
   },
   generateForgotPasswordOTP({ email }) {
-    const token = Math.floor(100000 + Math.random() * 900000).toString();
+    const token = generateDegitOTP();
     RedisService.saveFotgotPasswordOTP({ email, token, expire: 120 });
     return token;
   },
