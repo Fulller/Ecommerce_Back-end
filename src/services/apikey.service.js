@@ -1,4 +1,4 @@
-import { APIKey } from "../models/index.js";
+import APIKey from "../models/apikey.model.js";
 
 const APIKeyService = {
   async findByKey(key) {

@@ -1,4 +1,4 @@
-import { APIKeyService } from "../services/index.js";
+import APIKeyService from "../services/apikey.service.js";
 import { HEADER } from "../configs/const.config.js";
 import createHttpError from "http-errors";
 import _ from "lodash";

@@ -1,41 +1,33 @@
 import { Router } from "express";
-import { ProductController } from "../controllers/index.js";
 import { ProductValidate } from "../helpers/validate.helper.js";
-import { validate, controller, authenticate } from "../middlewares/index.js";
+import ProductController from "../controllers/product.controller.js";
+import {
+  validate,
+  controller,
+  authenticate,
+  checkPermission,
+} from "../middlewares/index.js";
 
 const ProductRouter = Router();
 
-// Route WITHOUT authenticate
-ProductRouter.get(
-  "/search/:keySearch",
-  controller(ProductController.searchProductByuser)
-);
-ProductRouter.get("/:id", controller(ProductController.getProduct));
-ProductRouter.get("/", controller(ProductController.getAllProducts));
-
-// Route WITH authenticate
 ProductRouter.use(authenticate);
 ProductRouter.post(
   "/",
+  checkPermission({ resource: "product", action: "create", possession: "own" }),
   validate(ProductValidate.create),
   controller(ProductController.create)
 );
-ProductRouter.patch("/:id", controller(ProductController.updateProduct));
-ProductRouter.post(
-  "/publish/:id",
-  controller(ProductController.publishProductByShop)
-);
-ProductRouter.post(
-  "/unpublish/:id",
-  controller(ProductController.unpublishProductByShop)
+ProductRouter.put(
+  "/:productId",
+  checkPermission({ resource: "product", action: "update", possession: "own" }),
+  validate(ProductValidate.update, ["params", "body"]),
+  controller(ProductController.update)
 );
 ProductRouter.get(
-  "/drafts/all",
-  controller(ProductController.getAllDraftsForShop)
-);
-ProductRouter.get(
-  "/published/all",
-  controller(ProductController.getAllPublishForShop)
+  "/:productId/by-shop",
+  checkPermission({ resource: "product", action: "read", possession: "own" }),
+  validate(ProductValidate.getByShop, "params"),
+  controller(ProductController.getByShop)
 );
 
 export default ProductRouter;

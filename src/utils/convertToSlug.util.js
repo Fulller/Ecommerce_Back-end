@@ -31,18 +31,18 @@ function convertToSlugSPUSKU(text) {
     trim: true, // trim leading and trailing replacement chars, defaults to `true`
   });
 }
-function spuSlug(spuName) {
-  return convertToSlugSPUSKU(`${spuName}.${generateTailSlug()}`);
+function productSlug(productName) {
+  return convertToSlugSPUSKU(`${productName}.${generateTailSlug()}`);
 }
-function skuSlug(spuName, spuVariations, skuTierIdx) {
+function skuSlug(productName, spuVariations, skuTierIdx) {
   const variationValues = spuVariations.map((variation, index) => {
     const optionIndex = skuTierIdx[index] || 0;
     return variation.options[optionIndex];
   });
   const variationSlug = variationValues.join(" ");
   return convertToSlugSPUSKU(
-    `${spuName}.${variationSlug}.${generateTailSlug()}`
+    `${productName}.${variationSlug}.${generateTailSlug()}`
   );
 }
 
-export { convertToSlug, spuSlug, skuSlug };
+export { convertToSlug, productSlug, skuSlug };

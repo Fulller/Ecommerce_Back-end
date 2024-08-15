@@ -1,13 +1,18 @@
 import { Schema, SchemaTypes, model } from "mongoose";
 import {
   SKU_SCHEMA_CONST,
+  PRODUCT_SCHEMA_CONST,
   INVENTORY_SCHEMA_CONST,
 } from "../configs/schema.const.config.js";
 
 const { DOCUMENT_NAME, COLLECTION_NAME } = SKU_SCHEMA_CONST;
 const SKUSchema = new Schema(
   {
-    sku_spu: { type: SchemaTypes.ObjectId, required: true },
+    sku_product: {
+      type: SchemaTypes.ObjectId,
+      ref: PRODUCT_SCHEMA_CONST.DOCUMENT_NAME,
+      required: true,
+    },
     sku_tier_idx: { type: [SchemaTypes.Number], default: [] },
     sku_default: { type: SchemaTypes.Boolean, default: false },
     sku_slug: { type: SchemaTypes.String, required: true, unique: true },

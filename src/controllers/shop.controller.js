@@ -1,4 +1,4 @@
-import { ShopService /*, JWTService*/ } from "../services/index.js";
+import ShopService from "../services/shop.service.js";
 // import { HEADER } from "../configs/const.config.js";
 import _ from "lodash";
 

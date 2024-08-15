@@ -3,7 +3,7 @@ import { HEADER } from "../configs/const.config.js";
 import {
   ROLE_SCHEMA_CONST,
   DISCOUNT_SCHEMA_CONST,
-  SPU_SCHEMA_CONST,
+  PRODUCT_SCHEMA_CONST,
 } from "../configs/schema.const.config.js";
 
 const Joi_ObjectId = Joi.string()
@@ -37,17 +37,6 @@ const ShopValidate = {
   }),
   refreshToken: Joi.object({
     [HEADER.REFRESHTOKEN]: Joi.string().required(),
-  }),
-};
-const ProductValidate = {
-  create: Joi.object({
-    product_name: Joi.string().required(),
-    product_thumb: Joi.string().required(),
-    product_description: Joi.string(),
-    product_price: Joi.number().required(),
-    product_quantity: Joi.number().required(),
-    product_type: Joi.string().required(),
-    product_attributes: Joi.any(),
   }),
 };
 const DiscountValidate = {
@@ -180,21 +169,21 @@ const UserValidate = {
     refreshtoken: Joi.string().required(),
   }),
 };
-const SPUValidate = {
+const ProductValidate = {
   create: Joi.object({
-    spu_image_ratio: Joi.string()
-      .valid(...Object.values(SPU_SCHEMA_CONST.IMAGE_RATIO))
+    product_image_ratio: Joi.string()
+      .valid(...Object.values(PRODUCT_SCHEMA_CONST.IMAGE_RATIO))
       .required(),
-    spu_images: Joi.array()
+    product_images: Joi.array()
       .items(Joi.string().uri().required())
       .min(1)
       .required(),
-    spu_thumb: Joi.string().uri().required(),
-    spu_video: Joi.string().uri().required(),
-    spu_name: Joi.string().min(1).max(255).required(),
-    spu_category: Joi_ObjectId.required(),
-    spu_description: Joi.string().min(1).required(),
-    spu_attributes: Joi.array()
+    product_thumb: Joi.string().uri().required(),
+    product_video: Joi.string().uri().required(),
+    product_name: Joi.string().min(1).max(255).required(),
+    product_category: Joi_ObjectId.required(),
+    product_description: Joi.string().min(1).required(),
+    product_attributes: Joi.array()
       .items(
         Joi.object({
           name: Joi.string().required(),
@@ -204,11 +193,11 @@ const SPUValidate = {
       )
       .min(1)
       .required(),
-    spu_is_preorder: Joi.boolean().required(),
-    spu_usage_status: Joi.string()
-      .valid(...Object.values(SPU_SCHEMA_CONST.USAGE_STATUS))
+    product_is_preorder: Joi.boolean().required(),
+    product_usage_status: Joi.string()
+      .valid(...Object.values(PRODUCT_SCHEMA_CONST.USAGE_STATUS))
       .required(),
-    spu_variations: Joi.array()
+    product_variations: Joi.array()
       .items(
         Joi.object({
           name: Joi.string().required(),
@@ -216,7 +205,7 @@ const SPUValidate = {
         })
       )
       .required(),
-    spu_skus: Joi.array()
+    product_skus: Joi.array()
       .items(
         Joi.object({
           sku_tier_idx: Joi.array()
@@ -233,21 +222,21 @@ const SPUValidate = {
       .required(),
   }),
   update: Joi.object({
-    spuId: Joi_ObjectId,
-    spu_image_ratio: Joi.string()
-      .valid(...Object.values(SPU_SCHEMA_CONST.IMAGE_RATIO))
+    productId: Joi_ObjectId,
+    product_image_ratio: Joi.string()
+      .valid(...Object.values(PRODUCT_SCHEMA_CONST.IMAGE_RATIO))
       .required(),
-    spu_images: Joi.array()
+    product_images: Joi.array()
       .items(Joi.string().uri().required())
       .min(1)
       .required(),
-    spu_thumb: Joi.string().uri().required(),
-    spu_video: Joi.string().uri().required(),
-    spu_name: Joi.string().min(1).max(255).required(),
-    spu_slug: Joi.string(),
-    spu_category: Joi_ObjectId.required(),
-    spu_description: Joi.string().min(1).required(),
-    spu_attributes: Joi.array()
+    product_thumb: Joi.string().uri().required(),
+    product_video: Joi.string().uri().required(),
+    product_name: Joi.string().min(1).max(255).required(),
+    product_slug: Joi.string(),
+    product_category: Joi_ObjectId.required(),
+    product_description: Joi.string().min(1).required(),
+    product_attributes: Joi.array()
       .items(
         Joi.object({
           name: Joi.string().required(),
@@ -257,11 +246,11 @@ const SPUValidate = {
       )
       .min(1)
       .required(),
-    spu_is_preorder: Joi.boolean().required(),
-    spu_usage_status: Joi.string()
-      .valid(...Object.values(SPU_SCHEMA_CONST.USAGE_STATUS))
+    product_is_preorder: Joi.boolean().required(),
+    product_usage_status: Joi.string()
+      .valid(...Object.values(PRODUCT_SCHEMA_CONST.USAGE_STATUS))
       .required(),
-    spu_variations: Joi.array()
+    product_variations: Joi.array()
       .items(
         Joi.object({
           name: Joi.string().required(),
@@ -269,11 +258,11 @@ const SPUValidate = {
         })
       )
       .required(),
-    spu_skus: Joi.array()
+    product_skus: Joi.array()
       .items(
         Joi.object({
           _id: Joi_ObjectId_Not_Requied,
-          sku_spu: Joi_ObjectId_Not_Requied,
+          sku_product: Joi_ObjectId_Not_Requied,
           sku_inventory: Joi_ObjectId_Not_Requied,
           sku_slug: Joi.string(),
           sku_tier_idx: Joi.array()
@@ -290,7 +279,7 @@ const SPUValidate = {
       .required(),
   }),
   getByShop: Joi.object({
-    spuId: Joi_ObjectId,
+    productId: Joi_ObjectId,
   }),
 };
 const SKUValidate = {};
@@ -315,7 +304,6 @@ const CategoryValidate = {
 
 export {
   ShopValidate,
-  ProductValidate,
   DiscountValidate,
   CommentValidate,
   UploadValidate,
@@ -323,7 +311,7 @@ export {
   RBACValidate,
   TemplateValidate,
   UserValidate,
-  SPUValidate,
+  ProductValidate,
   SKUValidate,
   CategoryValidate,
 };

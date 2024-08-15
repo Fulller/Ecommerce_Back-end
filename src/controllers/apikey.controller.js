@@ -1,4 +1,4 @@
-import { APIKeyService } from "../services/index.js";
+import APIKeyService from "../services/apikey.service.js";
 import _ from "lodash";
 
 const APIKeyController = {

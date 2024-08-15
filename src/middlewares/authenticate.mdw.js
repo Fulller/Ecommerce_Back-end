@@ -1,4 +1,4 @@
-import { JWTService } from "../services/index.js";
+import JWTService from "../services/jwt.service.js";
 import { HEADER } from "../configs/const.config.js";
 import createHttpError from "http-errors";
 import _ from "lodash";

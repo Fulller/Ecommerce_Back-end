@@ -11,7 +11,7 @@ const InventoryService = {
     shopId,
     location = "Sai gon",
   }) {
-    const product = await ProductRepo.getProductById(productId);
+    const product = await ProductRepo.findById(productId);
     if (!product) {
       throw createHttpError(404, "Cannot found product");
     }
