@@ -75,7 +75,10 @@ const SPUService = {
           .value()
       )
       .value();
-
+    const isNewSKUs = !_.hasIn(skuList[0], "_id");
+    if (isNewSKUs) {
+      await SKUService.deleteMany(spu.spu_skus);
+    }
     const updatedSKUList = await SKUService.updateOrCreateMany(skuList);
     spu.spu_skus = _.map(updatedSKUList, (sku) => sku._id);
     await spu.save();

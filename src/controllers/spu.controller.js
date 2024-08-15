@@ -9,9 +9,7 @@ const SPUController = {
     return res.fly({
       status: 201,
       message: "Creat new SPU succesfully",
-      metadata: {
-        spu,
-      },
+      metadata: await SPUService.getByShop(spu._id, ownerId),
     });
   },
   async update(req, res) {

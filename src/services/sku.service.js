@@ -82,5 +82,15 @@ const SKUService = {
       throw createHttpError(400, "Error updating SKUs");
     }
   },
+  async deleteMany(skuIds) {
+    try {
+      return await SKU.updateMany(
+        { _id: { $in: skuIds } },
+        { $set: { isDeleted: true } }
+      );
+    } catch (error) {
+      throw createHttpError(400, "Error deleting SKUs: " + error.message);
+    }
+  },
 };
 export default SKUService;

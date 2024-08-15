@@ -244,7 +244,7 @@ const SPUValidate = {
     spu_thumb: Joi.string().uri().required(),
     spu_video: Joi.string().uri().required(),
     spu_name: Joi.string().min(1).max(255).required(),
-    spu_slug: Joi.string().required(),
+    spu_slug: Joi.string(),
     spu_category: Joi_ObjectId.required(),
     spu_description: Joi.string().min(1).required(),
     spu_attributes: Joi.array()
@@ -275,7 +275,7 @@ const SPUValidate = {
           _id: Joi_ObjectId_Not_Requied,
           sku_spu: Joi_ObjectId_Not_Requied,
           sku_inventory: Joi_ObjectId_Not_Requied,
-          sku_slug: Joi.string().required(),
+          sku_slug: Joi.string(),
           sku_tier_idx: Joi.array()
             .items(Joi.number().integer().min(0))
             .default([]),
