@@ -2,6 +2,7 @@ import Inventory from "../models/inventory.model.js";
 import ProductRepo from "../models/repositories/product.repo.js";
 import createHttpError from "http-errors";
 import _ from "lodash";
+import mongoose from "mongoose";
 
 const InventoryService = {
   async addStockToInventory({
@@ -36,6 +37,13 @@ const InventoryService = {
     } catch (err) {
       throw createHttpError(400, "Error create Inventory");
     }
+  },
+  async updateForSKU({ inven_id, inven_stock }, options) {
+    return Inventory.findOneAndUpdate(
+      { _id: inven_id || new mongoose.Types.ObjectId() },
+      { inven_stock },
+      options
+    );
   },
 };
 

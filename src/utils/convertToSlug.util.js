@@ -1,7 +1,16 @@
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
+import otpGenerator from "otp-generator";
 import slugify from "slugify";
 
+function generateTailSlug(length = 4) {
+  return otpGenerator.generate(length, {
+    digits: true,
+    lowerCaseAlphabets: true,
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
+}
 function convertToSlug(text) {
   return slugify(text.replace(/[^\w\s.]/gi, ""), {
     replacement: "_", // replace spaces with replacement character, defaults to `-`
@@ -23,7 +32,7 @@ function convertToSlugSPUSKU(text) {
   });
 }
 function spuSlug(spuName) {
-  return convertToSlugSPUSKU(`${spuName}.${uuidv4()}`);
+  return convertToSlugSPUSKU(`${spuName}.${generateTailSlug()}`);
 }
 function skuSlug(spuName, spuVariations, skuTierIdx) {
   const variationValues = spuVariations.map((variation, index) => {
@@ -31,7 +40,9 @@ function skuSlug(spuName, spuVariations, skuTierIdx) {
     return variation.options[optionIndex];
   });
   const variationSlug = variationValues.join(" ");
-  return convertToSlugSPUSKU(`${spuName}.${variationSlug}.${uuidv4()}`);
+  return convertToSlugSPUSKU(
+    `${spuName}.${variationSlug}.${generateTailSlug()}`
+  );
 }
 
 export { convertToSlug, spuSlug, skuSlug };

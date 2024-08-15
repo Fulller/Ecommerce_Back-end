@@ -14,8 +14,14 @@ SPURouter.use(authenticate);
 SPURouter.post(
   "/",
   checkPermission({ resource: "product", action: "create", possession: "own" }),
-  validate(SPUValidate.createNew),
-  controller(SPUController.createNew)
+  validate(SPUValidate.create),
+  controller(SPUController.create)
+);
+SPURouter.put(
+  "/:spuId",
+  checkPermission({ resource: "product", action: "update", possession: "own" }),
+  validate(SPUValidate.update, ["params", "body"]),
+  controller(SPUController.update)
 );
 SPURouter.get(
   "/:spuId/by-shop",
