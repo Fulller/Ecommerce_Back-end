@@ -1,9 +1,9 @@
-import { createClient } from "redis";
+import { redisClient, connectRedis } from "../database/redis.db.js"; // Adjust the path accordingly
 
 class RedisPubSubService {
   constructor() {
-    this.publisher = createClient();
-    this.subscriber = createClient();
+    this.publisher = redisClient.duplicate();
+    this.subscriber = redisClient.duplicate();
 
     this.publisher.on("error", (err) =>
       console.error("Redis Publisher Error:", err)
@@ -11,7 +11,6 @@ class RedisPubSubService {
     this.subscriber.on("error", (err) =>
       console.error("Redis Subscriber Error:", err)
     );
-
     this.connectClients();
   }
 
@@ -25,20 +24,19 @@ class RedisPubSubService {
   }
 
   async publish(channel, message) {
-    if (!this.publisher.isOpen) {
-      await this.publisher.connect();
-    }
-    return this.publisher.publish(channel, message);
+    await this.connectClients();
+    return this.publisher.publish(channel, JSON.stringify(message));
   }
 
   async subscribe(channel, callback) {
-    if (!this.subscriber.isOpen) {
-      await this.subscriber.connect();
-    }
+    await this.connectClients();
+
     await this.subscriber.subscribe(channel, (message) => {
-      callback(channel, message);
+      callback(channel, JSON.parse(message));
     });
   }
 }
 
-export default new RedisPubSubService();
+export default new RedisPubSubService(
+  await connectRedis("CONNECTED :: REDIS :: PUBSUB")
+);

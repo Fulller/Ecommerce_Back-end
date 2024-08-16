@@ -282,7 +282,6 @@ const ProductValidate = {
     productId: Joi_ObjectId,
   }),
 };
-const SKUValidate = {};
 const CategoryValidate = {
   addCategory: Joi.object({
     cat_name: Joi.string().required(),
@@ -301,6 +300,12 @@ const CategoryValidate = {
     categoryId: Joi_ObjectId,
   }),
 };
+const CartValidate = {
+  addToCart: Joi.object({
+    sku: Joi_ObjectId,
+    quantity: Joi.number().min(1).required(),
+  }),
+};
 
 export {
   ShopValidate,
@@ -312,6 +317,6 @@ export {
   TemplateValidate,
   UserValidate,
   ProductValidate,
-  SKUValidate,
   CategoryValidate,
+  CartValidate,
 };

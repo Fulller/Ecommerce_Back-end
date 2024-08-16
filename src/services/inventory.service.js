@@ -23,16 +23,11 @@ const InventoryService = {
     const options = { upsert: true, new: true };
     return await Inventory.findOneAndUpdate(query, updateSet, options);
   },
-  async createForSKU({
-    inven_stock,
-    inven_location = "unknown",
-    inven_reservations = [],
-  }) {
+  async createForSKU({ inven_stock, inven_location = "unknown" }) {
     try {
       return Inventory.create({
         inven_stock,
         inven_location,
-        inven_reservations,
       });
     } catch (err) {
       throw createHttpError(400, "Error create Inventory");

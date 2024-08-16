@@ -27,6 +27,9 @@ const InventoryRepo = {
     const option = { upsert: true, new: true };
     return await Inventory.updateOne(query, updateSet, option);
   },
+  findBySKU(skuId) {
+    return Inventory.findOne({ inven_sku: skuId });
+  },
 };
 
 export default InventoryRepo;

@@ -9,5 +9,11 @@ const CartRepo = {
       cart_state: CART_SCHEMA_CONST.STATE.ACTIVE,
     }).lean();
   },
+  async findByUser(cart_user) {
+    return await Cart.findOne({
+      cart_user: toObjectId(cart_user),
+      cart_state: CART_SCHEMA_CONST.STATE.ACTIVE,
+    });
+  },
 };
 export default CartRepo;

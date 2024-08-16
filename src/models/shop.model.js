@@ -32,6 +32,7 @@ const ShopSchema = new Schema(
       ref: USER_SCHEMA_CONST.DOCUMENT_NAME,
       require: true,
     },
+    shop_is_mall: { type: SchemaTypes.Boolean, default: false },
   },
   { timestamps: true, collection: COLLECTION_NAME }
 );

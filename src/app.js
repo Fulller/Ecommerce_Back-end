@@ -4,6 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import router from "./routes/index.js";
 import initApp from "./helpers/init.helper.js";
+import registerEventHandlers from "./helpers/asyncOperations.helper.js";
 import session from "express-session";
 import passport from "passport";
 import { connectMongoDB } from "./database/mongodb.db.js";
@@ -23,7 +24,7 @@ import env from "./configs/env.config.js";
 const app = express();
 
 await Promise.all([connectMongoDB(), connectRedis()]);
-await initApp();
+await Promise.all([initApp(), registerEventHandlers()]);
 await Promise.all([initAccessControl(), connectS3()]);
 
 configureProxyS3(app);

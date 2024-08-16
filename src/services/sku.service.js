@@ -30,29 +30,21 @@ const SKUService = {
     try {
       const promises = skuList.map(async (sku) => {
         let inventory;
-
-        // Nếu SKU có tồn tại inventory
         if (sku.sku_inventory) {
-          // Tìm Inventory theo ID
           inventory = await Inventory.findById(sku.sku_inventory);
           if (inventory) {
-            // Cập nhật tồn kho của Inventory
             inventory.inven_stock = sku.sku_stock;
             await inventory.save();
           } else {
-            // Nếu Inventory không tồn tại, tạo mới
             inventory = await Inventory.create({
               inven_stock: sku.sku_stock,
               inven_location: "unknown",
-              inven_reservations: [],
             });
           }
         } else {
-          // Nếu SKU không có inventory, tạo mới Inventory
           inventory = await Inventory.create({
             inven_stock: sku.sku_stock,
             inven_location: "unknown",
-            inven_reservations: [],
           });
         }
 
@@ -68,10 +60,8 @@ const SKUService = {
             new: true,
           }
         );
-
         inventory.inven_sku = updatedSKU._id;
         await inventory.save();
-
         return updatedSKU;
       });
 

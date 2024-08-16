@@ -21,3 +21,4 @@ export { default as generateRandomPassword } from "./generateRandomPassword.js";
 export { default as transformRolesToGrants } from "./transformRolesToGrants.util.js";
 export { getCleanData } from "./lodash.util.js";
 export { default as generateDegitOTP } from "./generateOTP.util.js";
+export { standardizeCart } from "./standardizeData.util.js";
