@@ -1,20 +1,6 @@
 import CartService from "../services/cart.service.js";
 
 const CartController = {
-  async update(req, res) {
-    return res.fly({
-      status: 200,
-      message: "Update cart product to cart successfuly",
-      metadata: await CartService.addToCartV2(req.body),
-    });
-  },
-  async delete(req, res) {
-    return res.fly({
-      status: 200,
-      message: "Delete cart product to cart successfuly",
-      metadata: await CartService.deleteUserCart(req.body),
-    });
-  },
   async getByUser(req, res) {
     const userId = req.user._id;
     return res.fly({
@@ -29,6 +15,26 @@ const CartController = {
     return res.fly({
       status: 200,
       message: "Add product cart to cart successfuly",
+      metadata: await CartService.getByUser(userId),
+    });
+  },
+  async updateCartQuantityItem(req, res) {
+    const userId = req.user._id;
+    const { cart_item_id, quantity } = req.body;
+    await CartService.updateCartQuantityItem(userId, cart_item_id, quantity);
+    return res.fly({
+      status: 200,
+      message: "Update cart product to cart successfuly",
+      metadata: await CartService.getByUser(userId),
+    });
+  },
+  async removeCartItem(req, res) {
+    const userId = req.user._id;
+    const { cart_item_id } = req.body;
+    await CartService.removeCartItem(userId, cart_item_id);
+    return res.fly({
+      status: 200,
+      message: "Delete cart item successfuly",
       metadata: await CartService.getByUser(userId),
     });
   },

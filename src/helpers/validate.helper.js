@@ -305,6 +305,13 @@ const CartValidate = {
     sku: Joi_ObjectId,
     quantity: Joi.number().min(1).required(),
   }),
+  updateCartQuantityItem: Joi.object({
+    cart_item_id: Joi_ObjectId,
+    quantity: Joi.number().min(1),
+  }),
+  removeCartItem: Joi.object({
+    cart_item_id: Joi_ObjectId,
+  }),
 };
 
 export {

@@ -8,26 +8,6 @@ import CHANNEL_CONST from "../configs/channel.cons.configs.js";
 import { standardizeCart, getCleanData } from "../utils/index.js";
 
 const CartService = {
-  async updateUserCartQuantity({ userId, product }) {
-    const { productId, quantity } = product;
-    const query = {
-      cart_userId: userId,
-      "cart_items.sku": productId,
-      cart_state: CART_SCHEMA_CONST.STATE.ACTIVE,
-    };
-    const updateSet = { $inc: { "cart_products.$.quantity": quantity } };
-    const options = { upsert: true, new: true };
-    return await Cart.findOneAndUpdate(query, updateSet, options);
-  },
-  async deleteUserCart({ userId, productId }) {
-    const query = {
-      cart_userId: userId,
-      cart_state: CART_SCHEMA_CONST.STATE.ACTIVE,
-    };
-    const updateSet = { $pull: { cart_products: { productId } } };
-    const deleteCart = await Cart.updateOne(query, updateSet);
-    return deleteCart;
-  },
   async createUserCart(userId) {
     const query = {
       cart_user: userId,
@@ -93,22 +73,36 @@ const CartService = {
     }
   },
   async removeCartItem(cart_user, cart_item_id) {
-    try {
-      const updatedCart = await Cart.findOneAndUpdate(
-        { cart_user },
-        { $pull: { cart_items: { _id: cart_item_id } } },
-        { new: true }
-      );
-      if (!updatedCart) {
-        throw createHttpError(400, "Cart not found or item not in cart.");
-      }
-      return updatedCart;
-    } catch (error) {
+    const updatedCart = await Cart.findOneAndUpdate(
+      { cart_user, cart_state: CART_SCHEMA_CONST.STATE.ACTIVE },
+      { $pull: { cart_items: { _id: cart_item_id } } }
+    );
+    if (!updatedCart) {
+      throw createHttpError(400, "Cart not found or item not in cart.");
+    }
+    return updatedCart;
+  },
+  async updateCartQuantityItem(cart_user, cart_item_id, quantity) {
+    const cart = await Cart.findOne({
+      cart_user,
+      "cart_items._id": cart_item_id,
+      cart_state: CART_SCHEMA_CONST.STATE.ACTIVE,
+    }).populate("cart_items.sku");
+    if (!cart) {
       throw createHttpError(
-        400,
-        `Error removing item from cart: ${error.message}`
+        `CartService :: updateCartQuantityItem :: cart not found`
       );
     }
+    const cartItem = cart.cart_items.id(cart_item_id);
+    const sku = cartItem.sku;
+    const inventory = await InventoryRepo.findBySKU(sku._id);
+    if (quantity > inventory.inven_stock) {
+      throw createHttpError(
+        `CartService :: updateCartQuantityItem :: quantity must be less than stock stock = ${inventory.inven_stock}`
+      );
+    }
+    cartItem.quantity = quantity;
+    await cart.save();
   },
 };
 
